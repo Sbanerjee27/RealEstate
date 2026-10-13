@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>inHouse | Real Estate Portal</title>
+  <meta name="description" content="Browse popular properties, explore residential categories and request a call from our agents.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+  <style>
+/* inHouse portal: custom styling on top of Bootstrap 5 (grid, containers, forms, buttons) */
+
+:root {
+  --white: #ffffff;
+  --ink: #111111;
+  --muted: #7a7a7a;
+  --nav-bg: #6d6d70;
+  --nav-text: #f2f2f2;
+  --hero-overlay: rgba(40, 40, 44, 0.55);
+  --accent: #2f80ed;
+  --accent-hover: #1d6fd6;
+  --chat: #5b1ee6;
+  --border: #d9d9d9;
+  --alt-bg: #f6f6f6;
+  --features-bg: #f4f5f9;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Work Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink);
+  background: var(--white);
+}
+
+/* Keep section headings clear of the sticky header when jumping via the nav */
+section[id] { scroll-margin-top: 150px; }
+
+a:focus-visible,
+button:focus-visible,
+.form-control:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1100;
+  padding: 10px 16px;
+  background: var(--ink);
+  color: var(--white);
+  border-radius: 4px;
+}
+
+/* Visually hidden, but still focusable/usable (used by the mobile menu checkbox) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+}
+
+/* ---------- Buttons (Bootstrap buttons, brand colour) ---------- */
+.btn-brand {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--accent-hover);
+  --bs-btn-hover-border-color: var(--accent-hover);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--accent-hover);
+  --bs-btn-active-border-color: var(--accent-hover);
+  --bs-btn-focus-shadow-rgb: 47, 128, 237;
+  --bs-btn-font-size: 0.8rem;
+  --bs-btn-font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+.btn-lg.btn-brand { font-size: 0.95rem; }
+
+/* ---------- Header ---------- */
+.site-header {
+  z-index: 1020;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+.topbar .logo {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+  color: var(--ink);
+}
+.logo__icon { width: 52px; height: 34px; }
+.logo__text { font-size: 38px; font-weight: 400; letter-spacing: -0.02em; }
+.logo__text strong { font-weight: 800; }
+.logo__badge {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  background: #f5e500;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 6px;
+  transform: translateY(-6px);
+}
+
+.contact-info__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+.contact-info__item a:hover { color: var(--ink); }
+
+.icon-circle {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid #ececec;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+.icon-circle svg { width: 22px; height: 22px; fill: var(--ink); }
+
+.nav-toggle {
+  display: inline-block;
+  padding: 10px 8px;
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--ink);
+  margin: 5px 0;
+}
+
+/* ---------- Main nav ---------- */
+.mainnav { background: var(--nav-bg); display: none; }
+.mainnav ul { min-height: 56px; align-items: center; }
+.mainnav a {
+  display: block;
+  padding: 14px 0;
+  color: var(--nav-text);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.mainnav a:hover,
+.mainnav a.is-active { color: #c4c4c6; }
+@media (min-width: 992px) {
+  .mainnav { display: block; }
+  .mainnav ul { height: 64px; }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  color: var(--white);
+  background:
+    linear-gradient(var(--hero-overlay), var(--hero-overlay)),
+    linear-gradient(135deg, #7f8c99 0%, #4b5561 45%, #2d333b 100%);
+  background-size: cover;
+  background-position: center;
+}
+.hero__content { padding: 80px 0; }
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.hero__line { width: 90px; height: 2px; background: var(--white); }
+.hero__title {
+  margin: 0 0 32px;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1.05;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.hero__text { max-width: 620px; margin: 0 0 32px; }
+
+/* ---------- Sections ---------- */
+.section { padding: 96px 0; }
+.section--alt { background: var(--alt-bg); }
+.section__title {
+  margin: 0 0 56px;
+  text-align: center;
+  font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.section__title--left { text-align: left; margin-bottom: 20px; }
+.section__title--plain {
+  font-size: clamp(1.5rem, 2.6vw, 1.85rem);
+  font-weight: 400;
+  margin-bottom: 14px;
+}
+.section__lead {
+  max-width: 560px;
+  margin: 0 auto 48px;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.lead-text { font-size: 1.05rem; color: #444; }
+
+/* ---------- Property cards ---------- */
+.property {
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.property:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !important;
+}
+.property__media {
+  position: relative;
+  height: 240px;
+  background: linear-gradient(160deg, var(--c1), var(--c2));
+}
+.property__media svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.25;
+}
+.property__address {
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+.property__meta {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: #444;
+}
+.property__meta li + li::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  margin: 0 12px;
+  vertical-align: middle;
+  background: var(--border);
+}
+.property__price { color: var(--accent); font-weight: 600; }
+.property__desc { font-size: 0.8rem; line-height: 1.6; color: var(--muted); }
+
+/* ---------- Highlights strip ---------- */
+.features { background: var(--features-bg); padding: 64px 0; }
+.feature { display: flex; gap: 16px; align-items: flex-start; }
+.feature__icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: #555;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.feature h3 { margin-bottom: 8px; font-weight: 400; }
+.feature p { margin: 0; font-size: 0.8rem; line-height: 1.7; color: var(--muted); }
+
+/* ---------- Residential categories ---------- */
+.category { display: block; color: var(--ink); }
+.category__media {
+  height: 110px;
+  border-radius: 6px;
+  background: linear-gradient(160deg, var(--c1), var(--c2));
+  transition: transform 0.2s;
+}
+.category:hover .category__media { transform: scale(1.02); }
+.category h3 { margin: 14px 0 0; font-weight: 400; }
+.category:hover h3 { color: var(--accent); }
+
+/* ---------- About ---------- */
+.checklist li {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 14px;
+  height: 8px;
+  border-left: 3px solid var(--accent);
+  border-bottom: 3px solid var(--accent);
+  transform: rotate(-45deg);
+}
+.stat {
+  height: 100%;
+  background: var(--white);
+  padding: 24px 28px;
+  border-left: 4px solid var(--accent);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+.stat strong { display: block; font-size: 2.2rem; font-weight: 800; line-height: 1.2; }
+.stat span {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}
+
+/* ---------- Team ---------- */
+.member__photo {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: linear-gradient(160deg, var(--c1), var(--c2));
+  color: var(--white);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.member__phone a { color: var(--ink); font-weight: 500; }
+.member__phone a:hover { color: var(--accent); }
+
+/* ---------- Best offers banner ---------- */
+.offers {
+  padding: 110px 0;
+  color: var(--white);
+  background:
+    linear-gradient(rgba(20, 22, 28, 0.6), rgba(20, 22, 28, 0.6)),
+    linear-gradient(135deg, #8c9aa8 0%, #3a4350 100%);
+  background-size: cover;
+  background-position: center;
+}
+.offers__title {
+  margin-bottom: 8px;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.offers__season { margin-bottom: 20px; color: #ffd166; font-size: 1.1rem; }
+.offers__text { max-width: 560px; margin: 0 auto 28px; font-size: 0.9rem; line-height: 1.7; }
+
+/* ---------- Testimonials carousel (CSS-only, auto-advancing) ---------- */
+.testimonial-carousel { overflow: hidden; }
+.testimonial-track {
+  display: flex;
+  width: 300%;
+  animation: testimonial-slide 12s infinite;
+}
+.testimonial-carousel:hover .testimonial-track,
+.testimonial-carousel:hover .testimonial-dots span { animation-play-state: paused; }
+.testimonial {
+  flex: 0 0 33.3333%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: left;
+}
+.testimonial blockquote {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #444;
+}
+.testimonial__avatar {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--c1), var(--c2));
+  color: var(--white);
+  font-weight: 600;
+}
+.testimonial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+.testimonial-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #cfcfcf;
+  animation: dot-active 12s infinite;
+}
+.testimonial-dots span:nth-child(2) { animation-delay: -8s; }
+.testimonial-dots span:nth-child(3) { animation-delay: -4s; }
+
+/* Three slides over 12s: hold each for ~4s, then move right-to-left to the next */
+@keyframes testimonial-slide {
+  0%, 30%   { transform: translateX(0); }
+  33.33%, 63.33% { transform: translateX(-33.3333%); }
+  66.66%, 96.66% { transform: translateX(-66.6667%); }
+  100%      { transform: translateX(0); }
+}
+@keyframes dot-active {
+  0%, 30%   { background: var(--accent); }
+  33.33%, 100% { background: #cfcfcf; }
+}
+
+/* ---------- Contact form ---------- */
+.contact-form .form-control {
+  border-color: var(--border);
+  font-size: 1rem;
+}
+.contact-form .form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(47, 128, 237, 0.2);
+}
+.contact-form .form-floating > label { color: var(--muted); }
+
+/* ---------- Footer ---------- */
+.footer {
+  background: var(--nav-bg);
+  color: var(--nav-text);
+  padding: 24px 0;
+  font-size: 0.9rem;
+}
+.footer a { color: var(--nav-text); }
+.footer__top { text-decoration: underline; }
+
+/* ---------- Chat launcher ---------- */
+.chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--chat);
+  color: var(--white);
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(91, 30, 230, 0.35);
+  display: grid;
+  place-items: center;
+  z-index: 1030;
+  transition: transform 0.2s;
+}
+.chat-launcher:hover { transform: scale(1.05); }
+.chat-launcher svg { width: 28px; height: 28px; fill: currentColor; }
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 991.98px) {
+  .topbar .logo__text { font-size: 30px; }
+  .mainnav { display: none; }
+  #navcheck:checked ~ .site-header .mainnav { display: block; }
+  .mainnav ul { flex-direction: column; height: auto; }
+  .mainnav a { padding: 14px 4px; }
+}
+
+@media (max-width: 767.98px) {
+  .section { padding: 64px 0; }
+  .section__title { margin-bottom: 36px; }
+  .hero { min-height: 520px; }
+  .hero__eyebrow { font-size: 1.1rem; gap: 14px; }
+  .hero__line { width: 40px; }
+  .property__media { height: 200px; }
+  .category__media { height: 90px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .testimonial-track,
+  .testimonial-dots span { animation: none; }
+  * { transition: none !important; }
+}
+  </style>
+</head>
+<body>
+
+  <a class="visually-hidden-focusable skip-link" href="#main">Skip to content</a>
+
+  <!-- Mobile menu state (checkbox toggle, no JS) -->
+  <input type="checkbox" id="navcheck" class="visually-hidden">
+
+  <div class="site-header sticky-top">
+    <!-- Top bar -->
+    <header class="topbar bg-white border-bottom">
+      <div class="container">
+        <div class="row align-items-center g-3 py-3">
+          <div class="col-6 col-lg-3">
+            <a href="#home" class="logo" aria-label="inHouse home">
+              <svg class="logo__icon" viewBox="0 0 60 40" aria-hidden="true">
+                <path d="M2 22 L30 2 L58 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+              </svg>
+              <span class="logo__text">in<strong>House</strong></span>
+              <span class="logo__badge">FREE</span>
+            </a>
+          </div>
+
+          <div class="col-lg-6 d-none d-lg-block">
+            <div class="row row-cols-2 g-3 justify-content-center">
+              <div class="col">
+                <div class="contact-info__item">
+                  <span class="icon-circle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+                  </span>
+                  <div>
+                    <a href="tel:1800123456">1-800-1234-567</a><br>
+                    <a href="tel:18008763765">1-800-8763-765</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="contact-info__item">
+                  <span class="icon-circle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                  </span>
+                  <div>
+                    2130 Fulton Street<br>
+                    San Diego, CA 94117-1080
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3 text-end">
+            <a href="#contact" class="btn btn-outline-dark d-none d-lg-inline-block">Request a call</a>
+            <label for="navcheck" class="nav-toggle d-lg-none" aria-label="Open menu">
+              <span></span><span></span><span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main navigation -->
+    <nav class="mainnav" aria-label="Main">
+      <div class="container">
+        <ul class="list-unstyled d-flex flex-column flex-lg-row gap-lg-5 mb-0">
+          <li><a href="#home" class="is-active">Home</a></li>
+          <li><a href="#about">About us</a></li>
+          <li><a href="#properties">Properties</a></li>
+          <li><a href="#contact">Contacts</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-xl-7 hero__content">
+            <p class="hero__eyebrow"><span class="hero__line"></span>Offering diverse</p>
+            <h1 class="hero__title">Properties</h1>
+            <p class="hero__text lead">Our portal gives you plenty of great properties across the country, so you can easily choose your dream home.</p>
+            <a href="#properties" class="btn btn-brand btn-lg px-4">View properties</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular properties -->
+    <section class="section" id="properties">
+      <div class="container">
+        <h2 class="section__title">Popular properties</h2>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <article class="card property h-100 border-0 shadow-sm">
+              <div class="property__media" data-label="Stone house" style="--c1:#5c6b5a;--c2:#2e3a2d">
+                <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <path d="M40 220 V110 L200 30 L360 110 V220 Z" fill="none" stroke="#fff" stroke-width="3"/>
+                  <rect x="150" y="150" width="100" height="70" fill="none" stroke="#fff" stroke-width="3"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <h3 class="h5 property__address">1248 Oak Hollow Ln, Dallas, TX 75229</h3>
+                <ul class="property__meta list-unstyled d-flex flex-wrap align-items-center">
+                  <li class="property__price">$1,500/mon</li>
+                  <li>2,400 Sq. Ft.</li>
+                  <li>3 Bedrooms</li>
+                </ul>
+                <p class="property__desc mb-0">A quiet family home set among mature trees, with a private drive and plenty of natural light.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-md-6">
+            <article class="card property h-100 border-0 shadow-sm">
+              <div class="property__media" data-label="Log cabin" style="--c1:#8a5a3c;--c2:#4a2e1f">
+                <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <path d="M40 220 V110 L200 30 L360 110 V220 Z" fill="none" stroke="#fff" stroke-width="3"/>
+                  <rect x="150" y="150" width="100" height="70" fill="none" stroke="#fff" stroke-width="3"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <h3 class="h5 property__address">77 Birch Ridge Rd, Fort Worth, TX 76140</h3>
+                <ul class="property__meta list-unstyled d-flex flex-wrap align-items-center">
+                  <li class="property__price">$1,300/mon</li>
+                  <li>1,900 Sq. Ft.</li>
+                  <li>2 Bedrooms</li>
+                </ul>
+                <p class="property__desc mb-0">A cosy timber cabin close to the lake, ideal for those who want the countryside without leaving the city.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-md-6">
+            <article class="card property h-100 border-0 shadow-sm">
+              <div class="property__media" data-label="Modern villa" style="--c1:#7d8c9a;--c2:#3b4755">
+                <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <path d="M40 220 V110 L200 30 L360 110 V220 Z" fill="none" stroke="#fff" stroke-width="3"/>
+                  <rect x="150" y="150" width="100" height="70" fill="none" stroke="#fff" stroke-width="3"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <h3 class="h5 property__address">902 Hillcrest Dr, Los Angeles, CA 90077</h3>
+                <ul class="property__meta list-unstyled d-flex flex-wrap align-items-center">
+                  <li class="property__price">$2,700/mon</li>
+                  <li>4,100 Sq. Ft.</li>
+                  <li>4 Bedrooms</li>
+                </ul>
+                <p class="property__desc mb-0">A modern villa with an open plan, a rooftop terrace and quick access to downtown.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-md-6">
+            <article class="card property h-100 border-0 shadow-sm">
+              <div class="property__media" data-label="Family home" style="--c1:#b08d57;--c2:#5e4726">
+                <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <path d="M40 220 V110 L200 30 L360 110 V220 Z" fill="none" stroke="#fff" stroke-width="3"/>
+                  <rect x="150" y="150" width="100" height="70" fill="none" stroke="#fff" stroke-width="3"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <h3 class="h5 property__address">510 Sunset Terrace, Avondale, AZ 85392</h3>
+                <ul class="property__meta list-unstyled d-flex flex-wrap align-items-center">
+                  <li class="property__price">$2,100/mon</li>
+                  <li>2,800 Sq. Ft.</li>
+                  <li>2 Bedrooms</li>
+                </ul>
+                <p class="property__desc mb-0">A bright, spacious residence with palm-lined grounds and a sheltered entrance.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="text-center mt-5">
+          <a href="#properties" class="btn btn-brand px-4">View more properties</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights strip -->
+    <section class="features" aria-label="Why choose inHouse">
+      <div class="container">
+        <div class="row g-4 g-lg-5">
+          <div class="col-md-4">
+            <div class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <div>
+                <h3 class="h5">Qualified Employees</h3>
+                <p>Our team includes experienced brokers and property managers ready to help you find the right home.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+              <div>
+                <h3 class="h5">Free Consultations</h3>
+                <p>Every conversation starts with a free consultation to understand what you are looking for.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
+              <div>
+                <h3 class="h5">100% Guaranteed</h3>
+                <p>Our agents stand behind every recommendation, so you can choose with confidence.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Residential categories -->
+    <section class="section" id="categories">
+      <div class="container">
+        <h2 class="section__title section__title--plain">Residential property categories</h2>
+        <p class="section__lead">We work with many types of residential property. Browse the listings to find the category that suits you.</p>
+
+        <div class="row row-cols-2 row-cols-lg-4 g-4">
+          <div class="col">
+            <a href="#properties" class="category">
+              <div class="category__media" style="--c1:#8b3a2e;--c2:#3d2a25"></div>
+              <h3 class="h6">Single-Family Homes</h3>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#properties" class="category">
+              <div class="category__media" style="--c1:#c9b49a;--c2:#6f6253"></div>
+              <h3 class="h6">Townhouses</h3>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#properties" class="category">
+              <div class="category__media" style="--c1:#d88f5b;--c2:#5a3420"></div>
+              <h3 class="h6">Multi-Family Homes</h3>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#properties" class="category">
+              <div class="category__media" style="--c1:#aab7c4;--c2:#56626e"></div>
+              <h3 class="h6">Condominiums</h3>
+            </a>
+          </div>
+        </div>
+
+        <div class="text-center mt-5">
+          <a href="#properties" class="btn btn-brand px-4">View all properties</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section team" id="team">
+      <div class="container">
+        <h2 class="section__title section__title--plain">Our team</h2>
+        <div class="row g-5">
+          <div class="col-md-6">
+            <div class="member d-flex gap-4">
+              <div class="member__photo" role="img" aria-label="Portrait of Olivia Carter" style="--c1:#c98f7a;--c2:#7a4a3e"><span>OC</span></div>
+              <div>
+                <h3 class="h6 mb-1">Olivia Carter</h3>
+                <p class="member__role small mb-2">Founder, Broker</p>
+                <p class="member__phone small mb-2"><a href="tel:18001234567">1-800-1234-567</a></p>
+                <p class="member__bio small text-secondary mb-0">Olivia founded inHouse to make buying and renting simpler. She has helped families across the country find homes for over 15 years.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="member d-flex gap-4">
+              <div class="member__photo" role="img" aria-label="Portrait of Daniel Brooks" style="--c1:#6f7f94;--c2:#2d3848"><span>DB</span></div>
+              <div>
+                <h3 class="h6 mb-1">Daniel Brooks</h3>
+                <p class="member__role small mb-2">Sales Associate</p>
+                <p class="member__phone small mb-2"><a href="tel:18008763765">1-800-8763-765</a></p>
+                <p class="member__bio small text-secondary mb-0">Daniel has worked in residential sales for a decade and knows the local market well, from family homes to investment properties.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="member d-flex gap-4">
+              <div class="member__photo" role="img" aria-label="Portrait of Maya Patel" style="--c1:#8fb3c9;--c2:#3c6077"><span>MP</span></div>
+              <div>
+                <h3 class="h6 mb-1">Maya Patel</h3>
+                <p class="member__role small mb-2">Licensed Realtor</p>
+                <p class="member__phone small mb-2"><a href="tel:18001234567">1-800-1234-567</a></p>
+                <p class="member__bio small text-secondary mb-0">Maya guides first-time buyers through every step, from mortgage questions to closing day, with clear and patient advice.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="member d-flex gap-4">
+              <div class="member__photo" role="img" aria-label="Portrait of Ethan Reyes" style="--c1:#b7a48c;--c2:#5b4d3d"><span>ER</span></div>
+              <div>
+                <h3 class="h6 mb-1">Ethan Reyes</h3>
+                <p class="member__role small mb-2">Broker</p>
+                <p class="member__phone small mb-2"><a href="tel:18008763765">1-800-8763-765</a></p>
+                <p class="member__bio small text-secondary mb-0">Ethan specialises in luxury homes and helps clients get the most value from every listing they consider.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best offers banner -->
+    <section class="offers" aria-labelledby="offersTitle">
+      <div class="container text-center">
+        <h2 class="offers__title" id="offersTitle">Best offers</h2>
+        <p class="offers__season">of the season</p>
+        <p class="offers__text">Choose from a range of carefully selected properties, with offers that match your budget and your requirements.</p>
+        <a href="#properties" class="btn btn-light btn-sm px-4">Read more</a>
+      </div>
+    </section>
+
+    <!-- Testimonials carousel (auto-advances, pauses on hover) -->
+    <section class="section" id="testimonials">
+      <div class="container">
+        <h2 class="section__title section__title--plain">Testimonials</h2>
+        <div class="testimonial-carousel" role="region" aria-roledescription="carousel" aria-label="Client testimonials">
+          <div class="testimonial-track">
+            <figure class="testimonial">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="testimonial__avatar" style="--c1:#e0b8a0;--c2:#9a6a57" aria-hidden="true">BW</span>
+                <figcaption>
+                  <strong class="d-block">Bill Warner</strong>
+                  <span class="small text-secondary">Regular client</span>
+                </figcaption>
+              </div>
+              <blockquote class="mb-0">I had just listed my property with inHouse and I could not have asked for more. The team kept me updated at every stage and answered every question quickly.</blockquote>
+            </figure>
+            <figure class="testimonial">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="testimonial__avatar" style="--c1:#c9d6c0;--c2:#5d7354" aria-hidden="true">AL</span>
+                <figcaption>
+                  <strong class="d-block">Ann Lee</strong>
+                  <span class="small text-secondary">Regular client</span>
+                </figcaption>
+              </div>
+              <blockquote class="mb-0">Our agent was thoughtful and well prepared. She understood exactly what our family needed and found us a home that fit our plans perfectly.</blockquote>
+            </figure>
+            <figure class="testimonial">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="testimonial__avatar" style="--c1:#d7c7e6;--c2:#6c5a86" aria-hidden="true">PC</span>
+                <figcaption>
+                  <strong class="d-block">Peter Clarkson</strong>
+                  <span class="small text-secondary">Regular client</span>
+                </figcaption>
+              </div>
+              <blockquote class="mb-0">The brokers were honest about pricing and never pushed us into a decision. Their professionalism and attention to detail made the whole process easy.</blockquote>
+            </figure>
+          </div>
+          <div class="testimonial-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section section--alt" id="about">
+      <div class="container">
+        <div class="row g-5 align-items-center">
+          <div class="col-lg-7">
+            <h2 class="section__title section__title--left">About inHouse</h2>
+            <p class="lead-text">inHouse is a property portal that connects buyers and renters with listings across the country. Every listing is reviewed by our team before it goes live.</p>
+            <p class="lead-text">Browse the listings, save the ones you like, and request a call from an agent when you find a match.</p>
+            <ul class="checklist list-unstyled">
+              <li>Verified listings</li>
+              <li>Transparent pricing</li>
+              <li>Local agents on request</li>
+            </ul>
+          </div>
+          <div class="col-lg-5">
+            <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-1 g-3">
+              <div class="col">
+                <div class="stat"><strong>1,200+</strong><span>Listings</span></div>
+              </div>
+              <div class="col">
+                <div class="stat"><strong>48</strong><span>States covered</span></div>
+              </div>
+              <div class="col">
+                <div class="stat"><strong>15k</strong><span>Happy clients</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="row g-5">
+          <div class="col-lg-5">
+            <h2 class="section__title section__title--left">Request a call</h2>
+            <p class="lead-text">Leave your details and an agent will call you back within one business day.</p>
+            <p class="small text-secondary mb-0">Your details are only used to contact you about your enquiry.</p>
+          </div>
+          <div class="col-lg-7">
+            <!-- Front end only: native HTML5 validation, no backend wired up -->
+            <form class="contact-form card border-0 shadow-sm p-4 p-md-5" action="#contact" method="post" novalidate>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="fieldName" name="name" placeholder="Your name" autocomplete="name" required>
+                    <label for="fieldName">Your name</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="tel" class="form-control" id="fieldPhone" name="phone" placeholder="Phone number" autocomplete="tel" required>
+                    <label for="fieldPhone">Phone number</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input type="email" class="form-control" id="fieldEmail" name="email" placeholder="Email address" autocomplete="email" required>
+                    <label for="fieldEmail">Email address</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                    <textarea class="form-control" id="fieldMessage" name="message" placeholder="What are you looking for?" style="height: 120px"></textarea>
+                    <label for="fieldMessage">What are you looking for?</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-brand btn-lg px-5">Request a call</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span>&copy; 2026 inHouse. All rights reserved.</span>
+      <span>2130 Fulton Street, San Diego, CA 94117-1080</span>
+      <a href="#home" class="footer__top">Back to top</a>
+    </div>
+  </footer>
+
+  <!-- Chat launcher (decorative) -->
+  <button class="chat-launcher" aria-label="Open chat" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+  </button>
+
+</body>
+</html>
