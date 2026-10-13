@@ -454,11 +454,15 @@ button:focus-visible,
   75%, 100% { background: var(--accent); }
 }
 
-.testimonial-carousel:not(:has(.testimonial:target)) + .testimonial-dots a:first-child,
-.testimonial-carousel:has(#t1:target) + .testimonial-dots a[href="#t1"],
-.testimonial-carousel:has(#t2:target) + .testimonial-dots a[href="#t2"],
-.testimonial-carousel:has(#t3:target) + .testimonial-dots a[href="#t3"] {
-  background: var(--accent);
+/* Fallback only: browsers without scroll-driven animations highlight the dot last clicked.
+   Kept out of supporting browsers, where a leftover :target would light two dots at once. */
+@supports not (animation-timeline: scroll()) {
+  .testimonial-carousel:not(:has(.testimonial:target)) + .testimonial-dots a:first-child,
+  .testimonial-carousel:has(#t1:target) + .testimonial-dots a[href="#t1"],
+  .testimonial-carousel:has(#t2:target) + .testimonial-dots a[href="#t2"],
+  .testimonial-carousel:has(#t3:target) + .testimonial-dots a[href="#t3"] {
+    background: var(--accent);
+  }
 }
 
 /* ---------- Contact form ---------- */
