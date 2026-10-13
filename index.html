@@ -373,21 +373,30 @@ button:focus-visible,
 .offers__season { margin-bottom: 20px; color: #ffd166; font-size: 1.1rem; }
 .offers__text { max-width: 560px; margin: 0 auto 28px; font-size: 0.9rem; line-height: 1.7; }
 
-/* ---------- Testimonials carousel (CSS-only, auto-advancing) ---------- */
-.testimonial-carousel { overflow: hidden; }
-.testimonial-track {
+/* ---------- Testimonials carousel (native scroll-snap: swipe, trackpad, keyboard; dots jump to a slide) ---------- */
+.testimonial-carousel {
   display: flex;
-  width: 300%;
-  animation: testimonial-slide 12s infinite;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  /* Tracks the carousel's scroll position so the dots can follow a swipe */
+  scroll-timeline: --testimonial-scroll x;
 }
-.testimonial-carousel:hover .testimonial-track,
-.testimonial-carousel:hover .testimonial-dots span { animation-play-state: paused; }
+.testimonial-carousel::-webkit-scrollbar { display: none; }
 .testimonial {
-  flex: 0 0 33.3333%;
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 24px;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  margin: 0;
+  padding: 8px 24px;
   text-align: left;
+}
+.testimonial > div,
+.testimonial > blockquote {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .testimonial blockquote {
   font-size: 1rem;
@@ -408,29 +417,48 @@ button:focus-visible,
 .testimonial-dots {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   margin-top: 28px;
 }
-.testimonial-dots span {
-  width: 9px;
-  height: 9px;
+.testimonial-dots a {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #cfcfcf;
-  animation: dot-active 12s infinite;
+  transition: background 0.3s, transform 0.3s;
 }
-.testimonial-dots span:nth-child(2) { animation-delay: -8s; }
-.testimonial-dots span:nth-child(3) { animation-delay: -4s; }
+.testimonial-dots a:hover { transform: scale(1.25); }
+.testimonial-dots a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
-/* Three slides over 12s: hold each for ~4s, then move right-to-left to the next */
-@keyframes testimonial-slide {
-  0%, 30%   { transform: translateX(0); }
-  33.33%, 63.33% { transform: translateX(-33.3333%); }
-  66.66%, 96.66% { transform: translateX(-66.6667%); }
-  100%      { transform: translateX(0); }
+/* The dots sit beside the carousel, so the section must scope the timeline name for them to use it */
+#testimonials { timeline-scope: --testimonial-scroll; }
+
+/* Active dot follows the swipe: the carousel's scroll position (0% to 100%) drives each dot's colour.
+   Slide 1 is at 0%, slide 2 at 50%, slide 3 at 100%. Browsers without scroll-driven animations
+   fall back to the :target rules below, which highlight the dot last clicked. */
+.testimonial-dots a:nth-child(1) { animation: dot-1 linear both; animation-timeline: --testimonial-scroll; }
+.testimonial-dots a:nth-child(2) { animation: dot-2 linear both; animation-timeline: --testimonial-scroll; }
+.testimonial-dots a:nth-child(3) { animation: dot-3 linear both; animation-timeline: --testimonial-scroll; }
+
+@keyframes dot-1 {
+  0%, 25%   { background: var(--accent); }
+  26%, 100% { background: #cfcfcf; }
 }
-@keyframes dot-active {
-  0%, 30%   { background: var(--accent); }
-  33.33%, 100% { background: #cfcfcf; }
+@keyframes dot-2 {
+  0%, 24%   { background: #cfcfcf; }
+  25%, 75%  { background: var(--accent); }
+  76%, 100% { background: #cfcfcf; }
+}
+@keyframes dot-3 {
+  0%, 74%   { background: #cfcfcf; }
+  75%, 100% { background: var(--accent); }
+}
+
+.testimonial-carousel:not(:has(.testimonial:target)) + .testimonial-dots a:first-child,
+.testimonial-carousel:has(#t1:target) + .testimonial-dots a[href="#t1"],
+.testimonial-carousel:has(#t2:target) + .testimonial-dots a[href="#t2"],
+.testimonial-carousel:has(#t3:target) + .testimonial-dots a[href="#t3"] {
+  background: var(--accent);
 }
 
 /* ---------- Contact form ---------- */
@@ -496,8 +524,7 @@ button:focus-visible,
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .testimonial-track,
-  .testimonial-dots span { animation: none; }
+  .testimonial-carousel { scroll-behavior: auto; }
   * { transition: none !important; }
 }
   </style>
@@ -819,13 +846,12 @@ button:focus-visible,
       </div>
     </section>
 
-    <!-- Testimonials carousel (auto-advances, pauses on hover) -->
+    <!-- Testimonials carousel (swipe or click a dot; no JS) -->
     <section class="section" id="testimonials">
       <div class="container">
         <h2 class="section__title section__title--plain">Testimonials</h2>
-        <div class="testimonial-carousel" role="region" aria-roledescription="carousel" aria-label="Client testimonials">
-          <div class="testimonial-track">
-            <figure class="testimonial">
+        <div class="testimonial-carousel" role="region" aria-roledescription="carousel" aria-label="Client testimonials" tabindex="0">
+            <figure class="testimonial" id="t1">
               <div class="d-flex align-items-center gap-3 mb-3">
                 <span class="testimonial__avatar" style="--c1:#e0b8a0;--c2:#9a6a57" aria-hidden="true">BW</span>
                 <figcaption>
@@ -835,7 +861,7 @@ button:focus-visible,
               </div>
               <blockquote class="mb-0">I had just listed my property with inHouse and I could not have asked for more. The team kept me updated at every stage and answered every question quickly.</blockquote>
             </figure>
-            <figure class="testimonial">
+            <figure class="testimonial" id="t2">
               <div class="d-flex align-items-center gap-3 mb-3">
                 <span class="testimonial__avatar" style="--c1:#c9d6c0;--c2:#5d7354" aria-hidden="true">AL</span>
                 <figcaption>
@@ -845,7 +871,7 @@ button:focus-visible,
               </div>
               <blockquote class="mb-0">Our agent was thoughtful and well prepared. She understood exactly what our family needed and found us a home that fit our plans perfectly.</blockquote>
             </figure>
-            <figure class="testimonial">
+            <figure class="testimonial" id="t3">
               <div class="d-flex align-items-center gap-3 mb-3">
                 <span class="testimonial__avatar" style="--c1:#d7c7e6;--c2:#6c5a86" aria-hidden="true">PC</span>
                 <figcaption>
@@ -855,9 +881,12 @@ button:focus-visible,
               </div>
               <blockquote class="mb-0">The brokers were honest about pricing and never pushed us into a decision. Their professionalism and attention to detail made the whole process easy.</blockquote>
             </figure>
-          </div>
-          <div class="testimonial-dots" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
+        <nav class="testimonial-dots" aria-label="Choose a testimonial">
+          <a href="#t1" aria-label="Show testimonial 1"></a>
+          <a href="#t2" aria-label="Show testimonial 2"></a>
+          <a href="#t3" aria-label="Show testimonial 3"></a>
+        </nav>
       </div>
     </section>
 
